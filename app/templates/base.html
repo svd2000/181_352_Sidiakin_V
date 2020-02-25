@@ -37,7 +37,7 @@
         {% block content %}
         <div class="my-4" id="SignIN">
           <div class="card-body">
-            {% if current_user.has_role('user') %}
+            {% if not current_user.has_role('specialist') and not current_user.has_role('admin')%}
             <div>
               <h1>Получение книг</h1>
             </div>
@@ -97,31 +97,35 @@
                 </head>
               </thead>
               <tbody>
-                {% for Buser in Book_user %}
                 {% for Issued in Issued_books %}
                 <tr>
                   <td> {{ Issued[0] }}</td>
                   <td> {{ Issued[1] }}</td>
                   <td> {% if current_user.has_role('admin') %}
-                    {{ Buser[0] }}
+                    <select name="type" class="text-white bg-dark custom-select ">
+                      {% for us in All_user %}
+                      <option value="{{ Book_user[0] }}">{{ us }} &nbsp;</option>
+                      {% endfor %}
+                    </select>
                     {% elif current_user.has_role('specialist') %}
-                    {{ Buser[0] }}
+                    {{ Book_user[0] }}
+                    </select>
                     {% endif %}
                   </td>
                   <td> {{ Issued[2] }}</td>
                   <td> {{ Issued[3] }}</td>
                   <td> {{ Issued[4] }}</td>
                   <td> <button class="btn btn-outline-success" type="button"
-                    onclick="document.location='/take_book/{{Issued[0]}}'">✔</button></td>
+                    onclick="document.location='/save/{{Issued[0]}}'">✔</button></td>
                     {% if current_user.has_role('admin') %}
                   <td> <button class="btn btn-outline-success" type="button"
-                    onclick="document.location='/take_book/{{Issued[0]}}'">🗑</button></td>
+                    onclick="document.location='/del/{{Issued[0]}}'">🗑</button></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
-                {% endfor %}
               </tbody>
             </table>
+            <button class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect" type="button" onclick="document.location='/newbook'">Добавить книгу</button>
             {% endif %}
           </div>
         </div>

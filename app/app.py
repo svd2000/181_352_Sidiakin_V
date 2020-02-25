@@ -61,8 +61,10 @@ def main():
     _Issued_books = cursor.fetchall()
     cursor.execute("SELECT `user`.`fullname` FROM `journal` JOIN `user`  ON (`journal`.`user_id` = `user`.`id`)")
     _Book_user = cursor.fetchall()
+    cursor.execute("SELECT `user`.`id`,`user`.`fullname` FROM `user`")
+    _All_user = cursor.fetchall()
     cursor.close()
-    return render_template('index.html', All_Book = _All_Book, Issued_books = _Issued_books, Book_user = _Book_user)
+    return render_template('index.html', All_Book = _All_Book, Issued_books = _Issued_books, Book_user = _Book_user, All_user = _All_user)
 
 @app.route('/showSignUp', methods=["GET", "POST"])
 def showSignUp():
@@ -97,16 +99,35 @@ def showSignUp():
     return render_template('signup.html')
 
 
-@app.route('/gbook', methods=["GET", "POST"])
+@app.route('/newbook', methods=["GET", "POST"])
 @login_required
-def gbook():
+def newbook():
     if request.method == 'POST':
-        _atype = request.form['inputAtype']
-    return render_template('gbook.html')
+            _Title = request.form['inputTitle']
+            _Author = request.form['inputAuthor']
+            _Release = request.form['inputRelease']
+            _Quantity = request.form['inputQuantity']
+            cnx = mysql.connector.connect(user='std_866', password='qwertyuio',host='std-mysql.ist.mospolytech.ru', database='std_866')
+            cursor = cnx.cursor() 
+            cursor.execute("INSERT INTO `books` (`id`, `title`, `author`, `release`, `quantity`) VALUES (NULL, '" + str(_Title) + "', '" + str(_Author) + "', '" + str(_Release) + "', '" + _Quantity + "');")
+            cnx.commit()
+            cursor.close()
+    return render_template('newbook.html')
 
 @app.route('/take_book/<int:id>', methods=["GET", "POST"])
 @login_required
 def take_book(id):
+    return redirect('/')
+
+@app.route('/del/<int:id>')
+@login_required
+def dellappeal(id):
+    if current_user.has_role('admin'):
+        cnx = mysql.connector.connect(user='std_866', password='qwertyuio',host='std-mysql.ist.mospolytech.ru', database='std_866')
+        cursor = cnx.cursor() 
+        cursor.execute("DELETE FROM `journal` WHERE `journal`.`id` = "+ str(id) +"")
+        cnx.commit()
+        cursor.close()
     return redirect('/')
 
 if __name__ == "__main__":
