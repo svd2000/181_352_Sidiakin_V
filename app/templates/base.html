@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style/main.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <title>181-352 {% block title %}{% endblock %}</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row justify-content-center text-center">
+      <div class="col-md-8" id="header">
+        <img
+          src="https://x-lines.ru/letters/i/cyrillicfancy/1130/40d499/30/1/4no7bqgosuea9wf44nhpbxjy4njn7wrwryauocjpgc4ur.png">
+      </div>
+      {% if current_user.is_authenticated %}
+      <div class="btn-group">
+        <div style="position: fixed;
+        right: 0; border-style: none;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <b style="font-size: 16px;"><em>{{ current_user.fullname }}</em></b>
+          <img width="64" height="80" src="../static/img/NA.png">
+          <b class="btn btn-outline-secondary" type="button" onclick="document.location='/logout'">Выйти</b>
+        </div>
+      </div>
+      {% else %}
+      <button class="btn btn-outline-secondary" style="position: absolute;
+      right: 0;" type="button" onclick="document.location='/login'">Войти</button>
+      {% endif %}
+      <div class="col-md-10 my-4 rounded" id="main">
+        {% block nav %}
+        {% endblock %}
+        {% block content %}
+        <div class="my-4" id="SignIN">
+          <div class="card-body">
+            <div>
+              <h1>Список обращений</h1>
+            </div>
+            <div>
+              <table class="table table-dark table-striped">
+                <thead>
+                  <tr>
+                    <td> ID </td>
+                    <td> Дата </td>
+                    <td> Пользователь </td>
+                    <td> Тип </td>
+                    <td> Статус </td>
+                    <td> Сообщение </td>
+                    <td> Действия </td>
+                  </tr>
+                  </head>
+
+                <tbody>
+                  {% for Book in All_Book %}
+                  <tr>
+                    <td> {{ Book[0] }}</td>
+                    <td> {{ Book[1] }}</td>
+                    <td> {{ Book[2] }}</td>
+                    <td> {{ Book[3] }}</td>
+                    <td> {{ Book[4] }}</td>
+                    <td> {{ Book[5] }}</td>
+                    <td>
+                      {% if current_user.has_role('admin') %}
+                      <button class="dropdown-item" type="button"
+                        onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
+                      <button class="dropdown-item" type="button"
+                        onclick="document.location='/dellbook/{{Book[0]}}'">Удалить</button>
+                      {% elif current_user.has_role('specialist') %}
+                      <button class="dropdown-item" type="button"
+                        onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
+                      {% else %}
+
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect z-depth-0" type="button"
+          onclick="document.location='/gbook'">Выдать книгу</button>
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+</body>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+  integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+{% block script %}
+
+{% endblock %}
+
+</html>

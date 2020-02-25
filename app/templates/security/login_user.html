@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-dark justify-content-center text-center">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-center text-center" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link text-secondary" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/login">Вход</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+{% endblock %}
+
+
+{% block content %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+<div class="my-4" id="SignIN">
+  <div class="card-body">
+    <div>
+      {% include "security/_messages.html" %}
+      <h1>Вход</h1>
+      <p>
+        У вас нет аккаунта?
+        <a href="/showSignUp">
+          Зарегистрироваться</a>
+      </p>
+    </div>
+    <div>
+      <form class="container" action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+        {{ login_user_form.hidden_tag() }}
+        {{ render_field_with_errors(login_user_form.email, class="form-control", placeholder="Enter email") }}
+        {{ render_field_with_errors(login_user_form.password, class="form-control", placeholder="Password") }}
+        {{ render_field(login_user_form.next) }}
+        {{ render_field(login_user_form.submit, class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect z-depth-0") }}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
