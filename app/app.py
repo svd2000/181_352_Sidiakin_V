@@ -152,4 +152,3 @@ def delbook(id):
 if __name__ == "__main__":
     app.debug = True
     app.run()
-qwertyuio
