@@ -57,8 +57,12 @@ def main():
     cursor = cnx.cursor() 
     cursor.execute("SELECT `id`,`title`,`author`,`release`,`quantity` FROM `books` ORDER BY `books`.`author` DESC")
     _All_Book = cursor.fetchall()
-    cursor.close() 
-    return render_template('index.html', All_Book = _All_Book)
+    cursor.execute("SELECT `journal`.`id`,`journal`.`date`, `books`.`title`,`books`.`author`,`journal`.`status` FROM `books` JOIN `journal`  ON (`books`.`id` = `journal`.`book`)")
+    _Issued_books = cursor.fetchall()
+    cursor.execute("SELECT `user`.`fullname` FROM `journal` JOIN `user`  ON (`journal`.`user_id` = `user`.`id`)")
+    _Book_user = cursor.fetchall()
+    cursor.close()
+    return render_template('index.html', All_Book = _All_Book, Issued_books = _Issued_books, Book_user = _Book_user)
 
 @app.route('/showSignUp', methods=["GET", "POST"])
 def showSignUp():
@@ -99,6 +103,11 @@ def gbook():
     if request.method == 'POST':
         _atype = request.form['inputAtype']
     return render_template('gbook.html')
+
+@app.route('/take_book/<int:id>', methods=["GET", "POST"])
+@login_required
+def take_book(id):
+    return redirect('/')
 
 if __name__ == "__main__":
     app.debug = True

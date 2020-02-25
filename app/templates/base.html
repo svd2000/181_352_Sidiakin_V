@@ -37,8 +37,9 @@
         {% block content %}
         <div class="my-4" id="SignIN">
           <div class="card-body">
+            {% if current_user.has_role('user') %}
             <div>
-              <h1>Список обращений</h1>
+              <h1>Получение книг</h1>
             </div>
             <div class="btn-group btn-block">
               <button class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect z-depth-0 dropdown-toggle"
@@ -65,27 +66,63 @@
                       <td> {{ Book[2] }}</td>
                       <td> {{ Book[3] }}</td>
                       <td> {{ Book[4] }}</td>
-                      <td>
-                        {% if current_user.has_role('admin') %}
-                        <button class="dropdown-item" type="button"
-                          onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
-                        <button class="dropdown-item" type="button"
-                          onclick="document.location='/dellbook/{{Book[0]}}'">Удалить</button>
-                        {% elif current_user.has_role('specialist') %}
-                        <button class="dropdown-item" type="button"
-                          onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
-                        {% else %}
-                        <button class="btn btn-outline-success" type="button"
+                      <td><button class="btn btn-outline-success" type="button"
                           onclick="document.location='/take_book/{{Book[0]}}'">Взять книгу</button>
-                        {% endif %}
                       </td>
                     </tr>
                     {% endfor %}
                   </tbody>
                 </table>
-
               </div>
             </div>
+            {% endif %}
+            {% if current_user.has_role('admin') or current_user.has_role('specialist') %}
+            <div>
+              <h1>Выданные книги</h1>
+            </div>
+            <table class="table table-dark table-striped">
+              <thead>
+                <tr>
+                  <td> ID </td>
+                  <td> Дата </td>
+                  <td> Пользователь </td>
+                  <td> Книга </td>
+                  <td> Автор </td>
+                  <td> Статус </td>
+                  <td> Сохранить </td>
+                  {% if current_user.has_role('admin') %}
+                  <td> Удалить </td>
+                  {% endif %}
+                </tr>
+                </head>
+              </thead>
+              <tbody>
+                {% for Buser in Book_user %}
+                {% for Issued in Issued_books %}
+                <tr>
+                  <td> {{ Issued[0] }}</td>
+                  <td> {{ Issued[1] }}</td>
+                  <td> {% if current_user.has_role('admin') %}
+                    {{ Buser[0] }}
+                    {% elif current_user.has_role('specialist') %}
+                    {{ Buser[0] }}
+                    {% endif %}
+                  </td>
+                  <td> {{ Issued[2] }}</td>
+                  <td> {{ Issued[3] }}</td>
+                  <td> {{ Issued[4] }}</td>
+                  <td> <button class="btn btn-outline-success" type="button"
+                    onclick="document.location='/take_book/{{Issued[0]}}'">✔</button></td>
+                    {% if current_user.has_role('admin') %}
+                  <td> <button class="btn btn-outline-success" type="button"
+                    onclick="document.location='/take_book/{{Issued[0]}}'">🗑</button></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
           </div>
         </div>
         {% endblock %}
