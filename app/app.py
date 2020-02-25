@@ -55,9 +55,8 @@ security = Security(app, user_datastore)
 def main():
     cnx = mysql.connector.connect(user='std_866', password='qwertyuio',host='std-mysql.ist.mospolytech.ru', database='std_866')
     cursor = cnx.cursor() 
-    # cursor.execute("SELECT Appeal.id,Appeal.date,user.fullname,Appeal.atype,Appeal.status,Appeal.message FROM `Appeal` JOIN `user`  ON (`Appeal`.`user` = `user`.`id`) ORDER BY `Appeal`.`date` DESC")
-    # _All_Appeal = cursor.fetchall()
-    _All_Book = '1'
+    cursor.execute("SELECT `id`,`title`,`author`,`release`,`quantity` FROM `books` ORDER BY `books`.`author` DESC")
+    _All_Book = cursor.fetchall()
     cursor.close() 
     return render_template('index.html', All_Book = _All_Book)
 

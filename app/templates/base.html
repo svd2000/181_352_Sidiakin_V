@@ -40,50 +40,54 @@
             <div>
               <h1>Список обращений</h1>
             </div>
-            <div>
-              <table class="table table-dark table-striped">
-                <thead>
-                  <tr>
-                    <td> ID </td>
-                    <td> Дата </td>
-                    <td> Пользователь </td>
-                    <td> Тип </td>
-                    <td> Статус </td>
-                    <td> Сообщение </td>
-                    <td> Действия </td>
-                  </tr>
-                  </head>
+            <div class="btn-group btn-block">
+              <button class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect z-depth-0 dropdown-toggle"
+                type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Выдать книгу</button>
+              </button>
+              <div class="dropdown-menu btn-block table table-dark table-striped">
+                <table class="table table-dark table-striped">
+                  <thead>
+                    <tr>
+                      <td> ID </td>
+                      <td> Название </td>
+                      <td> Автор </td>
+                      <td> Год издания </td>
+                      <td> Количество </td>
+                      <td> Действия </td>
+                    </tr>
+                    </head>
+                  </thead>
+                  <tbody>
+                    {% for Book in All_Book %}
+                    <tr>
+                      <td> {{ Book[0] }}</td>
+                      <td> {{ Book[1] }}</td>
+                      <td> {{ Book[2] }}</td>
+                      <td> {{ Book[3] }}</td>
+                      <td> {{ Book[4] }}</td>
+                      <td>
+                        {% if current_user.has_role('admin') %}
+                        <button class="dropdown-item" type="button"
+                          onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
+                        <button class="dropdown-item" type="button"
+                          onclick="document.location='/dellbook/{{Book[0]}}'">Удалить</button>
+                        {% elif current_user.has_role('specialist') %}
+                        <button class="dropdown-item" type="button"
+                          onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
+                        {% else %}
+                        <button class="btn btn-outline-success" type="button"
+                          onclick="document.location='/take_book/{{Book[0]}}'">Взять книгу</button>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
 
-                <tbody>
-                  {% for Book in All_Book %}
-                  <tr>
-                    <td> {{ Book[0] }}</td>
-                    <td> {{ Book[1] }}</td>
-                    <td> {{ Book[2] }}</td>
-                    <td> {{ Book[3] }}</td>
-                    <td> {{ Book[4] }}</td>
-                    <td> {{ Book[5] }}</td>
-                    <td>
-                      {% if current_user.has_role('admin') %}
-                      <button class="dropdown-item" type="button"
-                        onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
-                      <button class="dropdown-item" type="button"
-                        onclick="document.location='/dellbook/{{Book[0]}}'">Удалить</button>
-                      {% elif current_user.has_role('specialist') %}
-                      <button class="dropdown-item" type="button"
-                        onclick="document.location='/edit_book/{{Book[0]}}'">Редактировать</button>
-                      {% else %}
-
-                      {% endif %}
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
+              </div>
             </div>
           </div>
         </div>
-        <button class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect z-depth-0" type="button"
-          onclick="document.location='/gbook'">Выдать книгу</button>
         {% endblock %}
       </div>
     </div>
