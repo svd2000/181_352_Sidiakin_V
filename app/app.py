@@ -144,7 +144,7 @@ def delbook(id):
     if current_user.has_role('admin'):
         cnx = mysql.connector.connect(user='std_866', password='qwertyuio',host='std-mysql.ist.mospolytech.ru', database='std_866')
         cursor = cnx.cursor() 
-        cursor.execute("DELETE FROM `books` WHERE `journal`.`id` = "+ str(id) +"")
+        cursor.execute("DELETE FROM `books` WHERE `books`.`id` = "+ str(id) +"")
         cnx.commit()
         cursor.close()
     return redirect('/')
@@ -152,3 +152,4 @@ def delbook(id):
 if __name__ == "__main__":
     app.debug = True
     app.run()
+qwertyuio
