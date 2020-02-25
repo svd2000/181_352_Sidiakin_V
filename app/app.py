@@ -57,7 +57,7 @@ def main():
     cursor = cnx.cursor() 
     cursor.execute("SELECT `id`,`title`,`author`,`release`,`quantity` FROM `books` ORDER BY `books`.`author` DESC")
     _All_Book = cursor.fetchall()
-    cursor.execute("SELECT `journal`.`id`,`journal`.`date`, `books`.`title`,`books`.`author`,`journal`.`status` FROM `books` JOIN `journal`  ON (`books`.`id` = `journal`.`book`)")
+    cursor.execute("SELECT `journal`.`id`,`journal`.`date`, `books`.`title`,`books`.`author`,`journal`.`status`,`journal`.`user_id` FROM `books` JOIN `journal`  ON (`books`.`id` = `journal`.`book`)")
     _Issued_books = cursor.fetchall()
     cursor.execute("SELECT `user`.`fullname` FROM `journal` JOIN `user`  ON (`journal`.`user_id` = `user`.`id`)")
     _Book_user = cursor.fetchall()
@@ -114,9 +114,17 @@ def newbook():
             cursor.close()
     return render_template('newbook.html')
 
-@app.route('/take_book/<int:id>', methods=["GET", "POST"])
+@app.route('/take_book/<int:book_id>/<int:user_id>', methods=["GET", "POST"])
 @login_required
-def take_book(id):
+def take_book(book_id,user_id):
+    _date = datetime.date.today()
+    _user_id = user_id
+    _book_id = book_id
+    cnx = mysql.connector.connect(user='std_866', password='qwertyuio',host='std-mysql.ist.mospolytech.ru', database='std_866')
+    cursor = cnx.cursor() 
+    cursor.execute("INSERT INTO `journal` (`id`, `date`, `user_id`, `book`, `status`) VALUES (NULL, '" + str(_date) + "', '" + str(_user_id) + "', '" + str(_book_id) + "', '1');")
+    cnx.commit()
+    cursor.close()
     return redirect('/')
 
 @app.route('/del/<int:id>')
@@ -126,6 +134,17 @@ def dellappeal(id):
         cnx = mysql.connector.connect(user='std_866', password='qwertyuio',host='std-mysql.ist.mospolytech.ru', database='std_866')
         cursor = cnx.cursor() 
         cursor.execute("DELETE FROM `journal` WHERE `journal`.`id` = "+ str(id) +"")
+        cnx.commit()
+        cursor.close()
+    return redirect('/')
+
+@app.route('/delbook/<int:id>')
+@login_required
+def delbook(id):
+    if current_user.has_role('admin'):
+        cnx = mysql.connector.connect(user='std_866', password='qwertyuio',host='std-mysql.ist.mospolytech.ru', database='std_866')
+        cursor = cnx.cursor() 
+        cursor.execute("DELETE FROM `books` WHERE `journal`.`id` = "+ str(id) +"")
         cnx.commit()
         cursor.close()
     return redirect('/')

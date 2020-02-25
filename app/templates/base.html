@@ -66,8 +66,13 @@
                       <td> {{ Book[2] }}</td>
                       <td> {{ Book[3] }}</td>
                       <td> {{ Book[4] }}</td>
-                      <td><button class="btn btn-outline-success" type="button"
-                          onclick="document.location='/take_book/{{Book[0]}}'">Взять книгу</button>
+                      <td>
+                        {% if current_user.is_authenticated %}<button class="btn btn-outline-success" type="button"
+                          onclick="document.location='/take_book/{{Book[0]}}/{{ current_user.id }}'">Взять книгу</button>
+                        {% else %}
+                        <button class="btn btn-outline-success" type="button"
+                          onclick="document.location='/login'">Взять книгу</button>
+                        {% endif %}
                       </td>
                     </tr>
                     {% endfor %}
@@ -104,7 +109,9 @@
                   <td> {% if current_user.has_role('admin') %}
                     <select name="type" class="text-white bg-dark custom-select ">
                       {% for us in All_user %}
+                      {% if us[0] == Issued[5] %}
                       <option value="{{ Book_user[0] }}">{{ us }} &nbsp;</option>
+                      {% endif %}
                       {% endfor %}
                     </select>
                     {% elif current_user.has_role('specialist') %}
@@ -126,6 +133,47 @@
               </tbody>
             </table>
             <button class="btn btn-outline-primary btn-rounded btn-block my-4 waves-effect" type="button" onclick="document.location='/newbook'">Добавить книгу</button>
+            {% endif %}
+            {% if current_user.has_role('admin') %}
+            <table class="table table-dark table-striped">
+              <div>
+                <h1>Список всех книг</h1>
+              </div>
+              <thead>
+                <tr>
+                  <td> ID </td>
+                  <td> Название </td>
+                  <td> Автор </td>
+                  <td> Год издания </td>
+                  <td> Количество </td>
+                  <td> Действия </td>
+                </tr>
+                </head>
+              </thead>
+              <tbody>
+                {% for Book in All_Book %}
+                <tr>
+                  <td> {{ Book[0] }}</td>
+                  <td> {{ Book[1] }}</td>
+                  <td> {{ Book[2] }}</td>
+                  <td> {{ Book[3] }}</td>
+                  <td> {{ Book[4] }}</td>
+                  <td>
+                    {% if current_user.is_authenticated %}<button class="btn btn-outline-success" type="button"
+                      onclick="document.location='/take_book/{{Book[0]}}/{{ current_user.id }}'">Взять книгу</button>
+                    {% else %}
+                    <button class="btn btn-outline-success" type="button"
+                      onclick="document.location='/login'">Взять книгу</button>
+                    {% endif %}
+                  </td>
+                  <td> <button class="btn btn-outline-success" type="button"
+                    onclick="document.location='/savebook/{{ Book[0] }}'">✔</button></td>
+                  <td> <button class="btn btn-outline-success" type="button"
+                    onclick="document.location='/delbook/{{ Book[0] }}'">🗑</button></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
             {% endif %}
           </div>
         </div>
